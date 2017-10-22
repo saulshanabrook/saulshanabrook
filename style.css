@@ -33,9 +33,14 @@ img {
     max-width: 50rem;
 }
 
+h1 {
+    color: #d84e8c;
+}
 
+dl {
+    margin-top: -0.7rem;
+}
 h1, h2 {
-    color: #ca9ca7;
     margin-bottom: -1rem;
 }
 
