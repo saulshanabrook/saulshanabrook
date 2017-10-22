@@ -1,31 +1,12 @@
 body {
     background-color: #2c3731;
     color: #cbcdd6;
-    /* margin-left: 5%; */
-    /* margin-top: 2%;
-    margin-right: 0; */
-    /* max-width: 100rem; */
     font-family: sans-serif;
     max-width: 100rem;
     display: block;
     margin: auto;
     padding: 1rem 4rem;
 }
-
-/* @media (min-width: 40rem ) { */
-    /* #text {
-        position: absolute;
-        bottom: 0;
-        margin-right: 50%;
-    }
-    body {
-        display: inline-block;
-        position: relative;
-    } */
-/* } */
-
-
-
 
 img {
     width: 50%;
