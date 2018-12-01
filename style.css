@@ -1,6 +1,5 @@
 body {
     background-color: #2c3731;
-    color: #cbcdd6;
     font-family: sans-serif;
     max-width: 100rem;
     display: block;
@@ -18,13 +17,13 @@ h1 {
     color: #d84e8c;
 }
 
-dl {
-    margin-top: -0.7rem;
-}
-h1, h2 {
-    margin-bottom: -1rem;
+a {
+    color: #00ffd4;
 }
 
-a {
-    color: #6c867e;
+li {
+    padding: 5em;
 }
+ul {
+    list-style-type: none;
+  }
