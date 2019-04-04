@@ -94,6 +94,7 @@
 <hr>
 <p>The  slightly longer explanation is that, by default, RTD won't pick up on the <code>pyproject.toml</code> file like it would the <code>setup.py</code>. But, luckily  the version of <code>pip</code> does support these files now, so we just have to tell RTD to do a manual pip install.</p>
 <p>It's also pretty slick how <code>pip</code> passes the extra requirements to the build system, which in this case is <code>flit</code>, and <code>flit</code> know how that maps to the <code>requires-extra</code> you provided.</p>
+<p>If you have previously setup your project on RTD, you should <a href="https://docs.readthedocs.io/en/stable/guides/wipe-environment.html">wipe the environment</a> so that it will know to rebuild properly.</p>
 
   <div id="commento"></div>
 </article>
