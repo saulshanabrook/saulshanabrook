@@ -1,0 +1,70 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zero Cost Abstractions</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>Zero Cost Abstractions</h2>
+  <h3>2019-03-28</h3>
+  </header>
+<p>From <a href="https://web.archive.org/web/20190328151742/https://gitter.im/pikelet-lang/Lobby?at=5c9c33d8b6711251983ca930">a gitter conversation about Pikelet</a></p>
+<blockquote><blockquote><p>A trait system with monomorphization as a compilation strategy should definitely be doable (with limited novel research, I hope) for Pikelet.</p>
+</blockquote>
+<p>Are there languages that do this, to look at for examples?</p>
+<p>Rust currently does this.</p>
+<p>I found <a href="https://web.archive.org/web/20081012113943/http://www.eecs.harvard.edu/~greg/cs256sp2005/lec15.txt">https://web.archive.org/web/20081012113943/http://www.eecs.harvard.edu/~greg/cs256sp2005/lec15.txt</a>
+an interesting overview of some monomorphization techniques (esp. for higher rank polymorphism &amp; existential quantification)</p>
+<p>Lately, I’ve been thinking that “zero-cost abstraction” suggests “indirections that the compiler can see through”—semantic or syntactic factoring/encapsulation/wrapping/&amp;c. that doesn’t make the generated code any worse than what you would’ve written by hand</p>
+<p>At a low level, syntactic “lifting” of things is a good example of something people generally agree falls into this category—e.g. a string literal in C compiling to an array in the read-only data segment, or local variables compiling to automatically allocated registers, or a lambda in C++ compiling to an unboxed record and function</p>
+</blockquote>
+<hr>
+<p>Notes from the archive.org link:</p>
+<p>The metadsl project is a System F implementation deeply embedded in Python. But what are we using for type checking? We are using Python's typing!! What? That doesn't make sense! I know! I haven't seen this at all as even something that is a real thing. But the point is, we are piggy backing on MyPy to do our static analysis. And we aren't doing any type checking at runtime. The structure is more like this:</p>
+<ol>
+<li>Define how expression can compose</li>
+<li>Use Python's type system to provide static type annotations for functions on expressions, to limit in what contexts they can be called</li>
+<li>... In another place define different semantics for different use cases. For example, we can create a graph of the expressions or "evaluate" them by defining pattern replacements.</li>
+</ol>
+<p>From what I can gather, the system is some form System F-ω. Inside of it, we embed (can) embed a simply typed lambda calculus.</p>
+
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>

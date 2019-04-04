@@ -1,0 +1,68 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notes on &#34;Squid: Type-Safe, Hygienic, and Reusable Quasiquotes&#34;</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>Notes on &#34;Squid: Type-Safe, Hygienic, and Reusable Quasiquotes&#34;</h2>
+  <h3></h3>
+  </header>
+<p><a href="https://infoscience.epfl.ch/record/231700/files/scala17main-scala17main16-p-bdc7425-34084-final.pdf">https://infoscience.epfl.ch/record/231700/files/scala17main-scala17main16-p-bdc7425-34084-final.pdf</a></p>
+<p>This is why we need typed DSL in Python:</p>
+<blockquote><p>Manipulating such an IR is error-prone, as it is easy to con- struct nonsensical terms such as App(Const(1),Const(2)).</p>
+</blockquote>
+<p>How to get quasiquotes in Python?</p>
+<ul>
+<li>Custom string prefixes in Python, like quasiquotes: <a href="https://mail.python.org/pipermail/python-ideas/2013-May/020919.html">https://mail.python.org/pipermail/python-ideas/2013-May/020919.html</a></li>
+<li>Or make your own encoder? <a href="https://stackoverflow.com/a/37204095">https://stackoverflow.com/a/37204095</a></li>
+</ul>
+<p>Thoughts:</p>
+<ul>
+<li>Maybe just make the repper forms of real Python functions? i.e. <code>Rep[typing.Callable[...]]</code> instead of <code>Abstraction[...]]</code></li>
+</ul>
+<p>But the issue is you also need to store the types at runtime and the regular types aren't good at this...</p>
+<ul>
+<li>"Lift" function of <code>Rep[T] -&gt; Rep[V]</code> to <code>Rep[T -&gt; V]</code></li>
+</ul>
+
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>

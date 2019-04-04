@@ -1,0 +1,105 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flit &amp; Read the Docs</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>Flit &amp; Read the Docs</h2>
+  <h3>2019-03-29</h3>
+  </header>
+<p>This post is about the happy partnership between two wonderful technologies <a href="https://flit.readthedocs.io/en/latest/">Flit</a>, which gives you an alternative to writing a <code>setup.py</code> for your Python package, and <a href="https://readthedocs.org/">Read the Docs</a> which allows you to host your Sphinx documentation for free!</p>
+<p>TLDR is put this in your <code>readthedocs.yml</code>:</p>
+<div class="hll"><pre><span></span><span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+
+<span class="nt">python</span><span class="p">:</span>
+  <span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3.7</span>
+  <span class="nt">install</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">method</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pip</span>
+      <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.</span>
+      <span class="nt">extra_requirements</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">doc</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+</pre></div>
+<p>And then your wonderful <code>pyproject.toml</code> you created with <code>flit</code> will be used to install your Python package and your dependencies before building the docs on RTD. It will install the <code>doc</code> and <code>test</code> requirements in your <code>tool.flit.metadata.requires-extra</code> as well as your default requires.</p>
+<p>This is all set up and working on the [<code>metadsl</code>]<a href="https://github.com/Quansight-Labs/metadsl">https://github.com/Quansight-Labs/metadsl</a>) project if you are looking for an example. The <code>pyproject.toml</code> looks like this, at the current moment:</p>
+<div class="hll"><pre><span></span><span class="p">[</span><span class="n">build-system</span><span class="p">]</span>
+<span class="n">requires</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;flit&quot;</span><span class="p">]</span>
+<span class="n">build-backend</span> <span class="o">=</span> <span class="s">&quot;flit.buildapi&quot;</span>
+
+<span class="p">[</span><span class="n">tool</span><span class="p">.</span><span class="n">flit</span><span class="p">.</span><span class="n">metadata</span><span class="p">]</span>
+<span class="n">module</span> <span class="o">=</span> <span class="s">&quot;metadsl&quot;</span>
+<span class="n">author</span> <span class="o">=</span> <span class="s">&quot;Saul Shanabrook&quot;</span>
+<span class="n">author-email</span> <span class="o">=</span> <span class="s">&quot;s.shanabrook@gmail.com&quot;</span>
+<span class="n">home-page</span> <span class="o">=</span> <span class="s">&quot;https://github.com/Quansight-Labs/metadsl&quot;</span>
+<span class="n">requires</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;typing_extensions&quot;</span>
+<span class="p">]</span>
+<span class="n">requires-python</span> <span class="o">=</span> <span class="s">&quot;&gt;=3.7&quot;</span>
+<span class="n">classifiers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;Intended Audience :: Developers&quot;</span><span class="p">,</span>
+    <span class="s">&quot;License :: OSI Approved :: BSD License&quot;</span><span class="p">,</span>
+    <span class="s">&quot;Programming Language :: Python :: 3&quot;</span><span class="p">,</span>
+    <span class="s">&quot;Programming Language :: Python :: 3.7&quot;</span><span class="p">,</span>
+    <span class="s">&quot;Topic :: Software Development :: Libraries :: Python Modules&quot;</span>
+<span class="p">]</span>
+
+<span class="p">[</span><span class="n">tool</span><span class="p">.</span><span class="n">flit</span><span class="p">.</span><span class="n">metadata</span><span class="p">.</span><span class="n">requires-extra</span><span class="p">]</span>
+<span class="n">test</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;pytest&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pytest-cov&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pytest-mypy&quot;</span><span class="p">,</span>
+    <span class="s">&quot;mypy&quot;</span>
+<span class="p">]</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;sphinx&quot;</span><span class="p">,</span>
+    <span class="s">&quot;sphinx-autodoc-typehints&quot;</span>
+<span class="p">]</span>
+<span class="n">dev</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;jupyterlab&quot;</span>
+<span class="p">]</span>
+</pre></div>
+<hr>
+<p>The  slightly longer explanation is that, by default, RTD won't pick up on the <code>pyproject.toml</code> file like it would the <code>setup.py</code>. But, luckily  the version of <code>pip</code> does support these files now, so we just have to tell RTD to do a manual pip install.</p>
+<p>It's also pretty slick how <code>pip</code> passes the extra requirements to the build system, which in this case is <code>flit</code>, and <code>flit</code> know how that maps to the <code>requires-extra</code> you provided.</p>
+
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>
