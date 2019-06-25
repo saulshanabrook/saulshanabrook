@@ -1,0 +1,56 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expression Systems and Coroutines in Python</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>Expression Systems and Coroutines in Python</h2>
+  <h3>2019-06-25</h3>
+  </header>
+<p>For months I have been troubled by a hunch that lazy expression systems (Dask Array, Tensorflow, metadsl) should use some of the coroutine machinery in Python. The annoying part about these systems is the need to run <code>execute</code> at some point before you can actually see your results. Often, you also need to give some context for execution. In Tensorflow this might be the Session, in <code>metadsl</code> this is the replacement rules you have active.</p>
+<p>If we squint our eyes a bit, this looks like the <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines"><code>async</code>/<code>await</code> syntax</a>. How so? Well you end up with things that are like futures, in  that the represent a thing that will be computed but maybe is not yet. They also both have the notion of some context to run the object with, with coroutines this is the event loop.</p>
+<p>The main difference is that we compose coroutines inside <code>async</code> functions, which let us go back and forth between regular function calls and the <code>await</code> calls. What we do in something like Tensorflow, however, is more like a library that lets you manipulate Futures directly, by saying things like "When this finishes, the chain it with this other thing" so that we end up with one big future in the end, that we can call to do all of our work.</p>
+<p>We don't have Python control flow inside of this graph, because we don't end up executing it with the Python interpreter. So then Google has to end up creating things like autograph/<a href="https://github.com/jmd1011/snek-LMS#lightweight-syntax-for-building-computation-graphs">Snek-LMS</a> to convert Python control flow into another runtime.</p>
+<p>So I guess if we want this kind of support first class in the language, we could look to async/await as a test case here. How could we make Python extensible enough to build in that kind of syntax without forking it?</p>
+
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>
