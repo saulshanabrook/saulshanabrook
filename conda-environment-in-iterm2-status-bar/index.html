@@ -1,0 +1,73 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conda Environment in iTerm Status Bar</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>Conda Environment in iTerm Status Bar</h2>
+  <h3>2019-08-10</h3>
+  </header>
+<p>iTerm just added a really snazzy <a href="https://www.iterm2.com/documentation-status-bar.html">status bar</a>, to show things like your current directory and git branch. I wanted to also add my current conda environment. By default conda puts the environment at the end of your command prompt, but I find this problematic when I have to copy and paste my history. It ends up copying my conda environment as well. So here is a guide to adding this to your status bar instead</p>
+<p><img src="../conda-environment-in-iterm2-status-bar/screen-shot-2019-08-10-at-5.13.03-am.png" alt="Screen shot of status bar in iTerm2  with conda environment shown"></p>
+<p>First, we have to make iTerm aware of your current conda environment. We can access this from the <code>CONDA_DEFAULT_ENV</code> environmental variable and send it to our terminal by <a href="https://www.iterm2.com/documentation-scripting-fundamentals.html#setting-user-defined-variables">setting a user-defined-variable</a>. I use the <a href="https://fishshell.com/">fish shell</a>, so for me this means adding this to the end  of my <code>~/.config/fish/config.fish</code>:</p>
+<pre><code>test -e ~/.iterm2_shell_integration.fish ; and source ~/.iterm2_shell_integration.fish
+
+function iterm2_print_user_vars
+  iterm2_set_user_var condaEnv "$CONDA_DEFAULT_ENV"
+end
+</code></pre>
+<p>Now, we can go to the status bar settings in the iTerm preference, "Profiles", "Session", "Configure Status Bar",  and add a "Interpolated String" component. Then configure that component and set it's value to <code>\(user.condaEnv)</code>.</p>
+<p><img src="../conda-environment-in-iterm2-status-bar/screen-shot-2019-08-10-at-5.23.36-am.png" alt="Screen shot of iTerm 2 preferences"></p>
+<p>Now, once you activate a conda environment, it should show up in your status bar.</p>
+<p>The only thing left to do is to stop it from also showing up  in your command prompt. We should be able to  do this by setting the <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/configuration/use-condarc.html#change-command-prompt"><code>changeps1</code> conda config</a> to <code>False</code> (<code>conda config --set changeps1 False</code>), but <a href="https://github.com/conda/conda/issues/6996">conda currently doesn't respect this in its fish integration</a>.  So instead, I just reset my fish prompts after running the conda integration in my <code>config.fish</code>:</p>
+<pre><code>. /usr/local/miniconda3/etc/fish/conf.d/conda.fish
+
+# Reset fish prompts to empty
+function fish_prompt
+end
+
+function fish_right_prompt
+end
+</code></pre>
+
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>
