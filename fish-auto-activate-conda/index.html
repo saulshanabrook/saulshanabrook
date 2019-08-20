@@ -1,0 +1,66 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fish Auto Activate Conda</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>Fish Auto Activate Conda</h2>
+  <h3>2019-08-20</h3>
+  </header>
+<p>Today I finally grew tired of running <code>activate jupyterlab-data-explorer</code> ad nauseum, so I set up my <a href="https://fishshell.com/">fish shell</a> to auto activate a conda environment, whenever you change directories, based on the name of the folder:</p>
+<pre><code>function __auto-conda --on-variable PWD --description 'Auto activate conda env based on directory name'
+  status --is-command-substitution; and return
+  set __env_name (basename $PWD)
+  if test \( -d "/usr/local/miniconda3/envs/$__env_name" \) -a \( __env_name != "$CONDA_DEFAULT_ENV" \)
+    conda activate "$__env_name"
+  end
+end
+
+# run on startup as well
+__auto-conda
+</code></pre>
+<p>It amazes me how long I have put up with this inconvenience!</p>
+<p>This dovetails nicely with
+ <a href="https://www.saulshanabrook.com/conda-environment-in-iterm2-status-bar/">my last post on displaying your conda environment in the iTerm status bar</a>.</p>
+
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>
