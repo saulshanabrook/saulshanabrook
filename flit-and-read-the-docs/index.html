@@ -55,11 +55,11 @@
 </pre></div>
 <p>And then your wonderful <code>pyproject.toml</code> you created with <code>flit</code> will be used to install your Python package and your dependencies before building the docs on RTD. It will install the <code>doc</code> and <code>test</code> requirements in your <code>tool.flit.metadata.requires-extra</code> as well as your default requires.</p>
 <p>This is all set up and working on the <a href="https://github.com/Quansight-Labs/metadsl"><code>metadsl</code></a> project if you are looking for an example. The <code>pyproject.toml</code> looks like this, at the current moment:</p>
-<div class="hll"><pre><span></span><span class="p">[</span><span class="n">build-system</span><span class="p">]</span>
-<span class="n">requires</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;flit&quot;</span><span class="p">]</span>
+<div class="hll"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span> <span class="o">=</span> <span class="k">[&quot;flit&quot;]</span>
 <span class="n">build-backend</span> <span class="o">=</span> <span class="s">&quot;flit.buildapi&quot;</span>
 
-<span class="p">[</span><span class="n">tool</span><span class="p">.</span><span class="n">flit</span><span class="p">.</span><span class="n">metadata</span><span class="p">]</span>
+<span class="k">[tool.flit.metadata]</span>
 <span class="n">module</span> <span class="o">=</span> <span class="s">&quot;metadsl&quot;</span>
 <span class="n">author</span> <span class="o">=</span> <span class="s">&quot;Saul Shanabrook&quot;</span>
 <span class="n">author-email</span> <span class="o">=</span> <span class="s">&quot;s.shanabrook@gmail.com&quot;</span>
@@ -76,7 +76,7 @@
     <span class="s">&quot;Topic :: Software Development :: Libraries :: Python Modules&quot;</span>
 <span class="p">]</span>
 
-<span class="p">[</span><span class="n">tool</span><span class="p">.</span><span class="n">flit</span><span class="p">.</span><span class="n">metadata</span><span class="p">.</span><span class="n">requires-extra</span><span class="p">]</span>
+<span class="k">[tool.flit.metadata.requires-extra]</span>
 <span class="n">test</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">&quot;pytest&quot;</span><span class="p">,</span>
     <span class="s">&quot;pytest-cov&quot;</span><span class="p">,</span>

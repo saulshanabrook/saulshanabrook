@@ -1,0 +1,169 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C4ML</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>C4ML</h2>
+  <h3>2020-02-25</h3>
+  </header>
+<p>notes:</p>
+<p>Three steps:</p>
+<ol>
+<li>Write computation</li>
+<li>Determine what to evaluate (build evaluation unit if needed)</li>
+<li>Evaluate</li>
+<li>Wait for results</li>
+</ol>
+<p>In NumPy, each are done after every function call. For example in <code>np.arange(10)[0]</code>:</p>
+<ol>
+<li>np.arange(10) is written</li>
+<li>We want to evaluate <code>arange</code> function with <code>10</code> arange</li>
+<li>We evaluate</li>
+<li>We return result to user</li>
+</ol>
+<p>Then the process happens again for <code>__getitem__</code>.</p>
+<p>Let's compare this to Jax by default</p>
+<ol>
+<li><code>np.arange(10)</code> is written</li>
+<li>We build up an XLA graph for this expression</li>
+<li>We start evaluating this XLA graph</li>
+<li>Don't block on result until user actually needs it</li>
+</ol>
+<p>Same is done for <code>__getitem__</code>, starting step 1. on it doesn't require
+waiting for the results to be computed.</p>
+<p>So what do we mean by "needs it"? Well there are a number of methods in Python
+(just Python itself, not through the C API, if you are in C land you can mess with things)
+that are not able to be monkey typed. I.e. the type that is returned must be a real Python
+value not some object that has the same interface as it. This list includes:</p>
+<pre><code>* str(x)
+* repr(x)
+* type(x)
+* iter(x) (for loop) #TODO: look up right one here, is it iter or `__iter__` or `__next__`?
+* bool(x) (if, while)
+* ipykernel dunder methods for displaying in Jupyter
+</code></pre>
+<p>For most of these, we get the option to prepare the proper value for Python. So in Jax, we don't
+block on finishing the computation until one of these is triggerd #TODO: This is what I assume
+I could be wrong here.</p>
+<p>It also gives you the ability to stop at step 1 between each fcuntion call, and lets you move
+step 2 to the decoration of a function. For example:</p>
+<div class="hll"><pre><span></span><span class="n">jit</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)[</span><span class="mi">0</span><span class="p">])()</span>
+</pre></div>
+<p>This build up an XLA expression for both <code>arange</code> and <code>__getitem__</code> together, before executing.</p>
+<p>Numba takes a similar approach, but doesn't support the eager default mode that Jax does. However, it
+does bytecode analysis of the function, instead of using tracing, so it can support more control flow.</p>
+<p>The implicit question here is this:</p>
+<blockquote><p>I want to use a NumPy API. I would like to be able to choose my compilation and execution envronment
+seperately from describing my problem. Sometimes I want to iterate, sometimes I want to precompile. Can we build a framework to let users achieve this loose coupling?</p>
+</blockquote>
+<p>I could see a global Python flag or context manager for this:</p>
+<ol>
+<li>Evluate eager</li>
+<li>Evaluate on <strong>str</strong> etc method</li>
+<li>Evaluate only explicitly and error on those methods if we have not evaluated</li>
+</ol>
+<p>And another flag for what tool we use to evaluate.</p>
+<p>So let's say you are a library like matplotlib. You need to users to pass you some "data" object that maybe behave like numpy arrays or pandas dataframes. Or maybe you just need some specific subset of those APIs, not neccesarily compatibility with every single method and corner case.</p>
+<p>Matplotlib should be able to specify statically what is the interface/type of object they require. They should also be explcit internally when the want to evaluate. Why not just default to option number <code>2</code> above? Because we can getter performance if we batch multiple expression together. For example, let's say in matplotlib someone passes in a Parquet file. In one part they load column <em>x</em> and compute the sum, in another they load column <em>x</em> and compute the mean. If instead they said "Hey go execute these two expression and return me the result" the expresssions could be responsible for batching those things together and doing less work.</p>
+<p>So how can we do this in a way that doesn't tie matplotlib to any particular computation backend?</p>
+<p>What about this interface:</p>
+<div class="hll"><pre><span></span><span class="k">class</span> <span class="nc">Lazy</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">__execute__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">())</span>
+</pre></div>
+<p>Isn't this a lot like an awaitable object?</p>
+<p>TODO: Can we refer to self in generic type? Like:</p>
+<div class="hll"><pre><span></span><span class="k">class</span> <span class="nc">Hi</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">Hi</span><span class="p">]):</span>
+    <span class="o">...</span>
+</pre></div>
+<p>Naw, what about convert to?</p>
+<div class="hll"><pre><span></span><span class="k">class</span> <span class="nc">Convertable</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__asinstance__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tp</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="o">...</span>
+</pre></div>
+<div class="hll"><pre><span></span><span class="n">asinstance</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<span class="n">asinstance</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span>
+</pre></div>
+<div class="hll"><pre><span></span><span class="k">class</span> <span class="nc">Expression</span><span class="p">(</span><span class="n">Convertable</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__asinstance__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tp</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Converter</span><span class="p">[</span><span class="n">tp</span><span class="p">]</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+<p>This would help matplotlib case, if you want two do tuple:</p>
+<div class="hll"><pre><span></span><span class="n">asinstance</span><span class="p">(</span><span class="n">Pair</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;hi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;hi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span>
+</pre></div>
+<p>Could use for ipykernel conversions...</p>
+<div class="hll"><pre><span></span><span class="n">SVG</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s2">&quot;SVG&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+<span class="n">JSON</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s2">&quot;JSON&quot;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span>
+
+<span class="n">MIMEType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">Constant</span><span class="p">[</span><span class="s2">&quot;SVG&quot;</span><span class="p">],</span> <span class="n">SVG</span><span class="p">],</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">Constant</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">Constant</span><span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">],</span> <span class="n">JSON</span><span class="p">],</span>
+<span class="p">]</span>
+
+<span class="n">asinstance</span><span class="p">(</span><span class="s2">&quot;hi&quot;</span><span class="p">,</span> <span class="n">MIMEType</span><span class="p">)</span>
+<span class="c1"># union runs `asinstance` on each option, choosing first.</span>
+</pre></div>
+<hr>
+<p>Can we have an IR format that lets us represent Python properly and translate to any other?</p>
+<p>What do we need from a meta-ir? what do we need to share? what are the different layers?</p>
+<p>metadsl is one plateu we could shoehorn in to solve all these problems, but is it better to have some layers about it at the language level and then have it plug in? Sort of like the numpy api extending conversations? That work for any backend not just metadsl?</p>
+<p>Then once you have that, it can be like "use metadsl to get a head start?"</p>
+<!-- Need conversion mechanism as well so you can pass in other objects that  -->
+<!-- So 
+
+* When do we
+* when do we block on result?
+
+* When to start evaluating evaluate
+    * on explicit call (.execute, )
+    * on exit function (__bool__, etc)
+    * every function call (eager mode)
+    * on function definition (@jit)
+
+* -->
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>
