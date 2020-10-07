@@ -1,0 +1,224 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Partially Applied Pytest Fixtures</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>Partially Applied Pytest Fixtures</h2>
+  <h3>2020-10-07</h3>
+  </header>
+<p><strong>TLDR: If you want to create <code>pytest</code> fixtures that are functions themselves, you can partially curry them, as long as you preserve the signatures and names properly:</strong></p>
+<p>In this small example here, using the custom <code>partial_curry function</code>, we can create a pytest fixture that returns a function itself quite nicely, by first wrapping the function in the <code>partial_curry("tmp_path")</code> decorator:</p>
+<div class="hll"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="nd">@partial_curry</span><span class="p">(</span><span class="s2">&quot;tmp_path&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_tmp_file</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a temporary file with some text in it, returns the pathlib</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">tmp_path</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;file.txt&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span>
+
+<span class="k">def</span> <span class="nf">test_tmp_file</span><span class="p">(</span><span class="n">create_tmp_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pulls in the create_tmp_file fixture and calls it with some args</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">create_tmp_file</span><span class="p">(</span><span class="s2">&quot;some content&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">f</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;some content&quot;</span>
+
+
+<span class="c1"># TODO: improve typing in python 3.9 https://www.python.org/dev/peps/pep-0593/</span>
+<span class="k">def</span> <span class="nf">partial_curry</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">first_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Partially curry a function, to move the args around so one set must be called first and then the other second.</span>
+
+<span class="sd">    Updates the signature and names properly.</span>
+
+<span class="sd">    &gt;&gt;&gt; @partial_curry(&quot;hi&quot;, &quot;there&quot;)</span>
+<span class="sd">    ... def hello_world(hi, there, other):</span>
+<span class="sd">    ...     return hi + there + other</span>
+<span class="sd">    &gt;&gt;&gt; hello_world(hi=&quot;h&quot;, there=&quot;t&quot;)(other=&quot;r&quot;)</span>
+<span class="sd">    &#39;htr&#39;</span>
+<span class="sd">    &gt;&gt;&gt; hello_world(&quot;h&quot;, &quot;t&quot;)(&quot;r&quot;)</span>
+<span class="sd">    &#39;htr&#39;</span>
+<span class="sd">    &gt;&gt;&gt; hello_world(hi=&quot;h&quot;, there=&quot;t&quot;)(&quot;r&quot;)</span>
+<span class="sd">    &#39;htr&#39;</span>
+<span class="sd">    &gt;&gt;&gt; import inspect</span>
+<span class="sd">    &gt;&gt;&gt; inspect.signature(hello_world)</span>
+<span class="sd">    &lt;Signature (hi, there)&gt;</span>
+<span class="sd">    &gt;&gt;&gt; inspect.signature(hello_world(1, 2))</span>
+<span class="sd">    &lt;Signature (other)&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">outer_s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">first_args</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">inner_s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_args</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">outer</span><span class="p">(</span><span class="o">*</span><span class="n">outer_args</span><span class="p">,</span> <span class="o">**</span><span class="n">outer_kwargs</span><span class="p">):</span>
+            <span class="c1"># Bind each so args/kwargs are all resolved properly and normalized</span>
+            <span class="n">outer_bound</span> <span class="o">=</span> <span class="n">outer_s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="o">*</span><span class="n">outer_args</span><span class="p">,</span> <span class="o">**</span><span class="n">outer_kwargs</span><span class="p">)</span>
+
+            <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="o">*</span><span class="n">inner_args</span><span class="p">,</span> <span class="o">**</span><span class="n">inner_kwargs</span><span class="p">):</span>
+                <span class="n">inner_bound</span> <span class="o">=</span> <span class="n">inner_s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="o">*</span><span class="n">inner_args</span><span class="p">,</span> <span class="o">**</span><span class="n">inner_kwargs</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">f</span><span class="p">(</span>
+                    <span class="o">*</span><span class="n">outer_bound</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
+                    <span class="o">*</span><span class="n">inner_bound</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">outer_bound</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">inner_bound</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">inner</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">inner_s</span>  <span class="c1"># type: ignore</span>
+            <span class="k">return</span> <span class="n">inner</span>
+
+        <span class="n">outer</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">outer_s</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">outer</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+</pre></div>
+<h2>Background</h2>
+<p>I am currently experimenting with <a href="https://github.com/jupyterlab/rtc/pull/73">a GraphQL backend for the Jupyter server</a> and I wanted to share a helpful technique that I found for testing it.</p>
+<p>I am using Pytest fixtures to provide the GraphQL schema and then I want to be able to run queries against it easily, using another fixture. At first, I had a fixture that returned a class that was callable, like this:</p>
+<div class="hll"><pre><span></span><span class="kn">import</span> <span class="nn">dataclasses</span>
+<span class="kn">import</span> <span class="nn">ariadne</span>
+<span class="kn">import</span> <span class="nn">graphql</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span> <span class="nc">QueryCaller</span><span class="p">:</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="n">graphql</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">GraphQLSchema</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expect_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">variables</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        if expect error is true, then will verify an error has been raised and return the data.</span>
+
+<span class="sd">        Otherwise, raises a real error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">success</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">ariadne</span><span class="o">.</span><span class="n">graphql</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span> <span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="n">variables</span><span class="p">},</span>
+            <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">error_formatter</span><span class="o">=</span><span class="n">raise_errors_directly</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">expect_error</span>
+            <span class="k">else</span> <span class="n">ariadne</span><span class="o">.</span><span class="n">format_error</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">success</span>
+        <span class="k">if</span> <span class="n">expect_error</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;errors&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="n">schema</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">QueryCaller</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_kernels_mutations</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="k">await</span> <span class="n">query</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            query {</span>
+<span class="sd">                kernels {</span>
+<span class="sd">                    id</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+        <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;kernels&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="p">)</span>
+</pre></div>
+<p>However, it's a bit troublesome to have to write this custom class and return it from the function. So instead, using the <code>partial_curry</code> function above, you can just write one function and have that pull in some args from <code>pytest</code> fixtures and the rest from the user:</p>
+<div class="hll"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="nd">@partial_curry</span><span class="p">(</span><span class="s2">&quot;schema&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">query</span><span class="p">(</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="n">graphql</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">GraphQLSchema</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">expect_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">variables</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    if expect error is true, then will verify an error has been raised and return the data.</span>
+
+<span class="sd">    Otherwise, raises a real error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">success</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">ariadne</span><span class="o">.</span><span class="n">graphql</span><span class="p">(</span>
+        <span class="n">schema</span><span class="p">,</span>
+        <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span> <span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="n">variables</span><span class="p">},</span>
+        <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">error_formatter</span><span class="o">=</span><span class="n">raise_errors_directly</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">expect_error</span>
+        <span class="k">else</span> <span class="n">ariadne</span><span class="o">.</span><span class="n">format_error</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">success</span>
+    <span class="k">if</span> <span class="n">expect_error</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;errors&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+</pre></div>
+<p>Interestingly enough, you can write a function with almost the same runtime semantics as <code>partial_curry</code> just as <code>functools.partial(functools.partial, functools.partial)</code>, but the signature obviously wont' be updated, because this is generic to let you call any number of initial args and later args:</p>
+<div class="hll"><pre><span></span><span class="kn">import</span> <span class="nn">functool</span>
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello_there</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">hello_there</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">hello_there</span><span class="p">()(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>
