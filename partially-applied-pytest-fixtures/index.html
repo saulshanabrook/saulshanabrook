@@ -37,10 +37,10 @@
     
 <article>
   <header>
-  <h2>Partially Applied Pytest Fixtures</h2>
-  <h3>2020-10-07</h3>
+    <h2>Partially Applied Pytest Fixtures</h2>
+    <h3>2020-10-07</h3>
   </header>
-<p><strong>TLDR: If you want to create <code>pytest</code> fixtures that are functions themselves, you can partially curry them, as long as you preserve the signatures and names properly:</strong></p>
+  <p><strong>TLDR: If you want to create <code>pytest</code> fixtures that are functions themselves, you can partially curry them, as long as you preserve the signatures and names properly:</strong></p>
 <p>In this small example here, using the custom <code>partial_curry function</code>, we can create a pytest fixture that returns a function itself quite nicely, by first wrapping the function in the <code>partial_curry("tmp_path")</code> decorator:</p>
 <div class="hll"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
@@ -214,9 +214,15 @@
 <span class="n">hello_there</span><span class="p">()(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
-  <div id="commento"></div>
+  <script
+    src="https://utteranc.es/client.js"
+    repo="saulshanabrook/saulshanabrook"
+    issue-term="pathname"
+    theme="github-light"
+    crossorigin="anonymous"
+    async
+  ></script>
 </article>
-<script src="https://cdn.commento.io/js/commento.js"></script>
 
   </div>
 </body>

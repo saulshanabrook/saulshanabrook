@@ -37,10 +37,10 @@
     
 <article>
   <header>
-  <h2>Fish Auto Activate Conda</h2>
-  <h3>2019-08-20</h3>
+    <h2>Fish Auto Activate Conda</h2>
+    <h3>2019-08-20</h3>
   </header>
-<p>Today I finally grew tired of running <code>activate jupyterlab-data-explorer</code> ad nauseum, so I set up my <a href="https://fishshell.com/">fish shell</a> to auto activate a conda environment, whenever you change directories, based on the name of the folder:</p>
+  <p>Today I finally grew tired of running <code>activate jupyterlab-data-explorer</code> ad nauseum, so I set up my <a href="https://fishshell.com/">fish shell</a> to auto activate a conda environment, whenever you change directories, based on the name of the folder:</p>
 <pre><code>function __auto-conda --on-variable PWD --description 'Auto activate conda env based on directory name'
   status --is-command-substitution; and return
   set __env_name (basename $PWD)
@@ -56,9 +56,15 @@ __auto-conda
 <p>This dovetails nicely with
  <a href="https://www.saulshanabrook.com/conda-environment-in-iterm2-status-bar/">my last post on displaying your conda environment in the iTerm status bar</a>.</p>
 
-  <div id="commento"></div>
+  <script
+    src="https://utteranc.es/client.js"
+    repo="saulshanabrook/saulshanabrook"
+    issue-term="pathname"
+    theme="github-light"
+    crossorigin="anonymous"
+    async
+  ></script>
 </article>
-<script src="https://cdn.commento.io/js/commento.js"></script>
 
   </div>
 </body>

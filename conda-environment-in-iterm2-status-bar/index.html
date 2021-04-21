@@ -37,10 +37,10 @@
     
 <article>
   <header>
-  <h2>Conda Environment in iTerm Status Bar</h2>
-  <h3>2019-08-10</h3>
+    <h2>Conda Environment in iTerm Status Bar</h2>
+    <h3>2019-08-10</h3>
   </header>
-<p>iTerm just added a really snazzy <a href="https://www.iterm2.com/documentation-status-bar.html">status bar</a>, to show things like your current directory and git branch. I wanted to also add my current conda environment. By default conda puts the environment at the end of your command prompt, but I find this problematic when I have to copy and paste my history. It ends up copying my conda environment as well. So here is a guide to adding this to your status bar instead</p>
+  <p>iTerm just added a really snazzy <a href="https://www.iterm2.com/documentation-status-bar.html">status bar</a>, to show things like your current directory and git branch. I wanted to also add my current conda environment. By default conda puts the environment at the end of your command prompt, but I find this problematic when I have to copy and paste my history. It ends up copying my conda environment as well. So here is a guide to adding this to your status bar instead</p>
 <p><img src="../conda-environment-in-iterm2-status-bar/screen-shot-2019-08-10-at-5.13.03-am.png" alt="Screen shot of status bar in iTerm2  with conda environment shown"></p>
 <p>First, we have to make iTerm aware of your current conda environment. We can access this from the <code>CONDA_DEFAULT_ENV</code> environmental variable and send it to our terminal by <a href="https://www.iterm2.com/documentation-scripting-fundamentals.html#setting-user-defined-variables">setting a user-defined-variable</a>. I use the <a href="https://fishshell.com/">fish shell</a>, so for me this means adding this to the end  of my <code>~/.config/fish/config.fish</code>:</p>
 <pre><code>test -e ~/.iterm2_shell_integration.fish ; and source ~/.iterm2_shell_integration.fish
@@ -63,9 +63,15 @@ function fish_right_prompt
 end
 </code></pre>
 
-  <div id="commento"></div>
+  <script
+    src="https://utteranc.es/client.js"
+    repo="saulshanabrook/saulshanabrook"
+    issue-term="pathname"
+    theme="github-light"
+    crossorigin="anonymous"
+    async
+  ></script>
 </article>
-<script src="https://cdn.commento.io/js/commento.js"></script>
 
   </div>
 </body>
