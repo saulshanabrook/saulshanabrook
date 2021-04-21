@@ -1,0 +1,128 @@
+<!doctype html>
+<html >
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Saul Shanabrook">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Using Conda and Pip for Local Development</title>
+
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="../static/pygments.css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44398348-1');
+  </script>
+
+</head>
+
+<body>
+  <header>
+    <h1>Saul Shanabrook</h1>
+    <nav>
+      <ul class="nav navbar-nav">
+        <li><a href="../">Posts</a></li>
+        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
+        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
+        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
+        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="page">
+    
+<article>
+  <header>
+  <h2>Using Conda and Pip for Local Development</h2>
+  <h3>2021-04-21</h3>
+  </header>
+<p>I recently started working with a few new people on a Python package and they asked "Where is my trusty old <code>setup.py</code> file?! And why are some dependencies in this <code>pyproject.toml</code> thing and others in <code>environment.yml</code>?"</p>
+<p>So I went looking for a good guide to explain these things and came up a bit short. I also realized that maybe my setup is a maybe a bit bespoke! In the hope of explaining these things as well as getting feedback on how others do it, I set out to write a little blog post on how I set up my Python projects.</p>
+<p>The basic TLDR is:</p>
+<ul>
+<li>Use <a href="https://flit.readthedocs.io/en/latest/">Flit</a> + <a href="https://www.python.org/dev/peps/pep-0518/"><code>pyproject.toml</code></a> for distributing to the world on PyPi. </li>
+<li>Use <a href="https://conda-forge.org/">Conda (Forge)</a> + <a href="https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually"><code>environment.yml</code></a> for creating your own local development environment (because it offers better isolation than virtualenvs, but is faster than docker, and also better resolution than Pip).</li>
+</ul>
+<h2>Why Flit? What's <code>pyproject.toml</code>?</h2>
+<p>Flit is a tool to develop Python packages, that is similar to Poetry or setuptools (I am sure most of that is not technically correct because I am not an expert on Python packaging). I like flit because it's an opinionated library that forces you to adhere to some "best practices" like keeping all your files in a folder with the name of the library.</p>
+<p>When you are using flit, instead of doing <code>pip install -e .</code> you would do <code>flit install --symlink.</code>. And instead of putting all the dependency information in <code>setup.py</code> you put it in the declarative <code>pyproject.toml</code>. Here is an example</p>
+<div class="hll"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span> <span class="o">=</span> <span class="k">[&quot;flit&quot;]</span>
+<span class="n">build-backend</span> <span class="o">=</span> <span class="s">&quot;flit.buildapi&quot;</span>
+
+<span class="k">[tool.flit.metadata]</span>
+<span class="n">module</span> <span class="o">=</span> <span class="s">&quot;metadsl&quot;</span>
+<span class="n">author</span> <span class="o">=</span> <span class="s">&quot;Saul Shanabrook&quot;</span>
+<span class="n">author-email</span> <span class="o">=</span> <span class="s">&quot;s.shanabrook@gmail.com&quot;</span>
+<span class="n">home-page</span> <span class="o">=</span> <span class="s">&quot;https://github.com/Quansight-Labs/metadsl&quot;</span>
+<span class="c1"># These are required on install. of the package</span>
+<span class="n">requires</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;typing_extensions&quot;</span><span class="p">,</span>
+    <span class="s">&quot;typing_inspect&quot;</span><span class="p">,</span>
+    <span class="s">&quot;python-igraph&gt;=0.8.0&quot;</span>
+<span class="p">]</span>
+<span class="n">requires-python</span> <span class="o">=</span> <span class="s">&quot;&gt;=3.8&quot;</span>
+<span class="n">classifiers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;Intended Audience :: Developers&quot;</span><span class="p">,</span>
+    <span class="s">&quot;License :: OSI Approved :: BSD License&quot;</span><span class="p">,</span>
+    <span class="s">&quot;Programming Language :: Python :: 3&quot;</span><span class="p">,</span>
+    <span class="s">&quot;Programming Language :: Python :: 3.7&quot;</span><span class="p">,</span>
+    <span class="s">&quot;Topic :: Software Development :: Libraries :: Python Modules&quot;</span>
+<span class="p">]</span>
+
+<span class="k">[tool.flit.metadata.requires-extra]</span>
+<span class="c1"># These are only installed when developing the package, not when an end user installs it</span>
+<span class="n">test</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;pytest&gt;=3.6.0&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pytest-cov&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pytest-mypy&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pytest-randomly&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pytest-xdist&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pytest-pudb&quot;</span><span class="p">,</span>
+    <span class="s">&quot;mypy&quot;</span>
+<span class="p">]</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;sphinx&quot;</span><span class="p">,</span>
+    <span class="s">&quot;sphinx-autodoc-typehints&quot;</span><span class="p">,</span>
+    <span class="s">&quot;sphinx_rtd_theme&quot;</span><span class="p">,</span>
+    <span class="s">&#39;recommonmark&#39;</span><span class="p">,</span>
+    <span class="s">&quot;nbsphinx&quot;</span><span class="p">,</span>
+    <span class="s">&quot;ipykernel&quot;</span><span class="p">,</span>
+    <span class="s">&quot;IPython&quot;</span><span class="p">,</span>
+    <span class="s">&quot;sphinx-autobuild&quot;</span>
+<span class="p">]</span>
+<span class="n">dev</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;jupyterlab&gt;=1.0.0&quot;</span><span class="p">,</span>
+    <span class="s">&quot;nbconvert&quot;</span><span class="p">,</span>
+    <span class="s">&quot;pudb&quot;</span><span class="p">,</span>
+    <span class="s">&quot;beni&quot;</span>
+<span class="p">]</span>
+</pre></div>
+<h2>What about Conda and the <code>environment.yml</code>?</h2>
+<p>I use Conda to make separate worlds for each Python project I work on so that they don't conflict with each other.</p>
+<p>Before I started working at Quansight, I had stayed away from Conda. It seemed too closely linked to this Anaconda company, and wasn't an official Python "standard" as far as I could tell. Also, no one really used it much in the web development Python community. Previously, I used virtualenvs, and then Docker images, to keep my environments separate.</p>
+<p>Conda, in a way, is like an in between. Not as isolated as Docker, but more isolated than virtualenv, because each conda environment has its own Python installation. It's also easier to debug locally than docker and faster to start. It's easier to make your editor like VS Code also pick up your conda environment, then a docker image.</p>
+<p>A main difference between conda environments and virtualenvs is that conda packages up non-python packages as well. Why would this be useful? Because much of the scientific/ML python packages actually depend on C/fortran/non python dependencies. And installing these with pip gives you a bit of a worse experience. For more info about conda, see:</p>
+<ul>
+<li><a href="https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/">"Conda: Myths and Misconceptions" Jake VP</a></li>
+<li><a href="https://medium.com/analytics-vidhya/why-conda-install-instead-of-pip-install-ba4c6826a0ae">"Why conda install instead of pip install?" Siddhesh Gunjal</a></li>
+<li><a href="https://www.earthdatascience.org/courses/intro-to-earth-data-science/python-code-fundamentals/use-python-packages/introduction-to-python-conda-environments/">"Lesson 2. Use Conda Environments to Manage Python Dependencies: Everything That You Need to Know" Earth Data Analytics Online Certificate</a></li>
+</ul>
+<p>So I create a separate conda environment for every project, and store the developer dependencies in <code>environment.yml</code>. I also use <a href="https://saulshanabrook.github.io/fish-auto-activate-conda/">a Fish script</a> to auto-activate the environment based on the folder name.</p>
+<h2>Keeping <code>pyproject.toml</code> and <code>environment.yml</code> in sync</h2>
+<p>Unfortunately, using both of these tools requires duplicating the installation metadata in two files. Ideally, both <code>flit</code> and <code>conda</code> could somehow read from the <code>pyprojet.toml</code> file and developers could choose which tool to use to work on the project. Until that comes to be, I created a tool called <a href="https://github.com/Quansight-Labs/beni"><code>beni</code></a> which generates an <code>environment.yml</code> based on a <code>pyproject.toml</code>, to keep them in sync.</p>
+<h2>This is very confusing!</h2>
+<p>Yes, I know! There are many different communities, tools, and standards all interacting here and the experience isn't exactly streamlined. It happens to be what I am comfortable with at the moment, and what works for me, but I would be happy to learn more about what other people do.</p>
+
+  <div id="commento"></div>
+</article>
+<script src="https://cdn.commento.io/js/commento.js"></script>
+
+  </div>
+</body>
+
+</html>
