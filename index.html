@@ -1,145 +1,169 @@
-<!doctype html>
-<html >
-<head>
-  <meta charset="utf-8">
-  <meta name="description" content="Saul Shanabrook">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Saul Shanabrook</title>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      @font-face {
+        font-family: "Monument Grotesk Mono Light";
+        src: url("./fonts/ABCMonumentGroteskMono-Light-Trial.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Monument Grotesk Mono Regular";
+        src: url("./fonts/ABCMonumentGroteskMono-Regular-Trial.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Monument Grotesk Mono Thin";
+        src: url("./fonts/ABCMonumentGroteskMono-Thin-Trial.woff2") format("woff2");
+      }
+      body {
+        font-family: "Monument Grotesk Mono Light";
+        max-width: 80em;
+        margin: 0 auto !important; 
+      }
+      b {
+        font-family: "Monument Grotesk Mono Regular";
+        font-weight: normal;
+        font-size: large;
+      }
+      dd {
+        font-family: "Monument Grotesk Mono Thin";
+        font-size: smaller;
+      }
+      dl,
+      p {
+        margin-block-start: 0;
+      }
+      body {
+        padding: 5%;
+        background-color: rgb(241, 152, 232);
+      }
+      header {
+        text-align: center;
+      }
+      footer {
+        text-align: center;
+        font-size: smaller;
+        padding: 4px;
+      }
+      dt {
+        font-size: regular;
+      }
+      h2 {
+        margin-block-end: 0;
 
-  <link rel="stylesheet" href="./static/style.css">
-  <link rel="stylesheet" href="./static/pygments.css">
+        font-size: larger;
+        text-align: center;
+        font-family: "Monument Grotesk Mono Regular";
+      }
+      main {
+        border: 1px dashed black;
+        padding: 10px;
+      }
+      a {
+        text-decoration: none;;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      blockquote {
+        margin-block-end: 0;
+        margin-block-start: 0;
+        margin-inline-start: 8px;
+      }
+    </style>
+    <title>Saul Shanabrook</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        👋 My name is <b>Saul Shanabrook</b> and I would like to welcome you to my website 👋<br />
+        🔗 Here I present to you a small collection of “internet links,” which I hope you will enjoy 🔗<br />
+        🗂 I have helpfully arranged them into categories to better assist your enjoyment ability 🗂
+      </header>
+      <h2>💐 Plants 💐</h2>
+      <dl>
+        <dt><a href="https://pfaf.org/user/Default.aspx" target="_blank" rel="noopener">PFAF</a></dt>
+        <dd>a database of edible plants</dd>
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44398348-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+        <dt><a href="http://www.helpyourselfedibles.org/" target="_blank" rel="noopener">Help Yourself</a></dt>
+        <dd>nonprofit helping create public access food forests in western MA</dd>
 
-    gtag('config', 'UA-44398348-1');
-  </script>
+        <dt><a href="https://github.com/saulshanabrook/plant-friends" target="_blank" rel="noopener">Plant Friends</a></dt>
+        <dd>an iOS app I started to help people become better friends with plants near them</dd>
+      </dl>
 
-</head>
+      <h2>🏡 Land and Housing 🏡</h2>
+      <dl>
+        <dt><a href="https://valleyhousing.coop" target="_blank" rel="noopener">Valley Housing Cooperative</a></dt>
+        <dd>a project with some friends to find a place to live, do fun things, and try something out</dd>
 
-<body>
-  <header>
-    <h1>Saul Shanabrook</h1>
-    <nav>
-      <ul class="nav navbar-nav">
-        <li>Posts</li>
-        <li><a href="https://github.com/saulshanabrook/">Github</a></li>
-        <li><a href="https://twitter.com/sshanabrook">Twitter</a></li>
-        <li><a href="https://medium.com/@saulshanabrook">Medium</a> (inactive)</li>
-        <li><a href="https://github.com/saulshanabrook/saulshanabrook">Source</a></li>
-      </ul>
-    </nav>
-  </header>
-  <div class="page">
-    
-  
-  <header>
-      <h2><a href="./using-conda-and-pip-for-local-development/">Using Conda and Pip for Local Development</a></h2>
-      <h3>2021-04-21</h3>
-  </header>
+        <dt><a href="https://ebprec.org/" target="_blank" rel="noopener">East Bay Permanent Real Estate Cooperative</a></dt>
+        <dd>an inspiring model of using community control to prevent gentrification and create affordable resident controlled housing</dd>
 
-  
-  <header>
-      <h2><a href="./partially-applied-pytest-fixtures/">Partially Applied Pytest Fixtures</a></h2>
-      <h3>2020-10-07</h3>
-  </header>
+        <dt><a href="https://vimeo.com/473659298/ca3ef49cd1" target="_blank" rel="noopener">Radical Homeownership Part 2</a></dt>
+        <dd>a v. fun video on some great alternative options on community stewardship</dd>
+      </dl>
+      <h2>♾ Mathematics and Computers ♾</h2>
+      <dl>
+        <dt><a href="https://github.com/metadsl/metadsl" target="_blank" rel="noopener">metadsl</a></dt>
+        <dd>
+          a library I have been working on to use pattern matching and type analysis to build safe DSLs in Python, in order to allow scientific
+          computing libraries to better collaborate and share key abstractions.
+        </dd>
+        <dt><a href="https://python-code-data.readthedocs.io/en/latest/intro.html" target="_blank" rel="noopener">python-code-data</a></dt>
+        <dd>a library I wrote to provide a friendly isomporphic representation of Python’s bytecode objects</dd>
+        <dt><a href="https://github.com/jupyterlab/jupyterlab">jupyterlab</a></dt>
+        <dd>an open source data science IDE in your browser. I was a core maintainor for a while and helped on a variety of extensions as well</dd>
+        <dt><a href="https://github.com/LineaLabs/lineapy">lineapy</a></dt>
+        <dd>a python code analysis tool, which helps productionize data science code by building a DAG of python code. I was the main initial developer when I worked at the startup creating it for a bit</dd>
+      </dl>
 
-  
-  <header>
-      <h2><a href="./20200403/">2020.04.03</a></h2>
-      <h3>2020-04-03</h3>
-  </header>
+      <h2>🔄 Links to Links 🔄</h2>
+      <dl>
+        <dt><a href="https://github.com/saulshanabrook/saulshanabrook/discussions" target="_blank" rel="noopener">blog posts</a></dt>
+        <dd>my new blog posts on Github Discussions</dd>
+        <dt><a href="./old" target="_blank" rel="noopener">old blog posts</a></dt>
+        <dd>
+          my old blog posts on my previous statically generated website
+        </dd>
+      </dl>
+      <h2>🎭 Talks 🎭</h2>
+      <dl>
+        <dt>April 28, 2020: <a href="https://www.youtube.com/watch?v=DTl32fWhm6c">Using Altair, Ibis, and Vega for interactive exploration of OmniSci</a></dt>
+        <dd>
+          <blockquote>
+            Altair is a lovely tool that lets you build up complex interactive charts in Python. Ibis is also a lovely tool that lets you use a Pandas, like API to compose SQL expressions in OmniSci and other backends. By tying them together you can use the familiar syntax of Pandas, combined with the expressive power of Vega and Vega Lite, to visualize large amounts of data stored in OmniSci. This talk will walk through a number of examples of using this pipeline and then go through how it works.
+          </blockquote>
+          <cite>Saul Shanabrook @ <a href="https://summit.omnisci.com/sessions/using-altair-ibis-and-vega-for-interactive-exploration-of-omnisci">The OmniSci summer sessions</a></cite>
+        </dd>
+        <dt>December 8, 2019: <a href="https://www.youtube.com/watch?v=cdWdTPL7zrg">metadsl: separating API from execution</a></dt>
+        <dd>
+          <blockquote>
+            metadsl is a Python framework for writing APIs that are detached from how they are executed. With it we can be framework agnostic definitions of concepts like "arrays" and compile them to backends like Tensorflow or LLVM. In this talk, we will use metadsl to build high performance scientific computing libraries.
+          </blockquote>
+          <cite>Saul Shanabrook @ <a href="https://pydata.org/austin2019/schedule/presentation/33/metadsl-separating-api-from-execution/">PyData Austin 2019</a></cite>
+        </dd>
 
-  
-  <header>
-      <h2><a href="./composing-partial-evaluations/">&#34;Composing Partial Evaluations&#34;</a></h2>
-      <h3>2020-03-19</h3>
-  </header>
+        <dt>November 4, 2019: <a href="https://www.youtube.com/watch?v=zo6Amy3n7iE">Same API, Different Execution</a> </dt>
+        <dd>
+          <blockquote>
+            Can the Python data science and scientific computing ecoystem remain in the hands of community open source projects? Or will increasingly complex performance and hardware requirements leave room only for vertically integrated corporate sponsored projects?
+          </blockquote>
+          <cite>Saul Shanabrook @ <a href="https://pydata.org/nyc2019/schedule/presentation/50/same-api-different-execution/">PyData New York 2019</a></cite>
+        </dd>
 
-  
-  <header>
-      <h2><a href="./c4ml/">C4ML</a></h2>
-      <h3>2020-02-25</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./fish-auto-activate-conda/">Fish Auto Activate Conda</a></h2>
-      <h3>2019-08-20</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./conda-environment-in-iterm2-status-bar/">Conda Environment in iTerm Status Bar</a></h2>
-      <h3>2019-08-10</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./thunder-storm/">Lightning talk full of binders?</a></h2>
-      <h3>2019-07-25</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./deeply-embedded-dsls-in-python/">Deeply Embedded DSLs in Python</a></h2>
-      <h3>2019-06-26</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./expression-systems-and-async-in-python/">Expression Systems and Coroutines in Python</a></h2>
-      <h3>2019-06-25</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./lw/">λω for Metadsl</a></h2>
-      <h3>2019-04-01</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./statebox/">Statebox</a></h2>
-      <h3>2019-03-30</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./flit-and-read-the-docs/">Flit &amp; Read the Docs</a></h2>
-      <h3>2019-03-29</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./zero-cost-abstractions/">Zero Cost Abstractions</a></h2>
-      <h3>2019-03-28</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./first-post/">A new home!</a></h2>
-      <h3>2019-03-26</h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./modern-spiritual-needs/">Modern Spiritual Needs</a></h2>
-      <h3></h3>
-  </header>
-
-  
-  <header>
-      <h2><a href="./dsls/">Notes on &#34;Squid: Type-Safe, Hygienic, and Reusable Quasiquotes&#34;</a></h2>
-      <h3></h3>
-  </header>
-
-  
-
-  </div>
-</body>
-
+        <dt>November 17, 2018: <a href="https://www.youtube.com/watch?v=CAi8vgRakuk">uarray - Efficient and Generic Array Computation</a></dt>
+        <dd>
+          <blockquote>
+            Efficient array computing is required to continue advances in fields like IoT and AI. We demonstrate a system, uarray, that does array computation generically and targets different backends. We rely on a Mathematics of Arrays, a theory of shapes and indexing, to reduce array expressions. As a result, temporary arrays and unneeded calculations are eliminated leading to minimal memory and CPU usage.
+          </blockquote>
+          <cite>Saul Shanabrok and Travis Oliphant @ <a href="https://pydata.org/dc2018/schedule/presentation/46/">PyData Washington DC 2018</a></cite>
+        </dd>
+      </dl>
+    </main>
+    <footer>
+      source @
+      <a href="https://github.com/saulshanabrook/saulshanabrook">github.com/saulshanabrook/saulshanabrook</a>
+  </body>
 </html>
