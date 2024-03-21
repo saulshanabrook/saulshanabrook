@@ -6,15 +6,6 @@
     <meta name="description" content="Homepage for Saul Shanabrook" />
     <link rel="canonical" href="https://saul.shanabrook.com/" />
     <link rel="stylesheet" href="styles.css" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8SK5C5XHNC"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag("js", new Date());
-        gtag("config", "G-8SK5C5XHNC");
-    </script>
     <title>Saul Shanabrook</title>
 </head>
 <body>
