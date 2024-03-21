@@ -6,7 +6,7 @@
     <meta name="description" content="Homepage for Saul Shanabrook" />
     <link rel="canonical" href="https://saul.shanabrook.com/" />
     <link rel="stylesheet" href="styles.css" />
-    <title>Saul Shanabrook</title>
+    <!-- <title>Saul Shanabrook</title> -->
 </head>
 <body>
 
@@ -159,10 +159,9 @@ sessions](https://summit.omnisci.com/sessions/using-altair-ibis-and-vega-for-int
 > unneeded calculations are eliminated leading to minimal memory and
 > CPU usage.
 
-[PyData Washington DC
-2018](https://pydata.org/dc2018/schedule/presentation/46/)
+[PyData Washington DC 2018](https://pydata.org/dc2018/schedule/presentation/46/)
 
-<script
+<!-- <script
     src="https://giscus.app/client.js"
     data-repo="saulshanabrook/saulshanabrook"
     data-repo-id="MDEwOlJlcG9zaXRvcnkxNzc4NjM1ODk="
@@ -175,15 +174,16 @@ sessions](https://summit.omnisci.com/sessions/using-altair-ibis-and-vega-for-int
     data-lang="en"
     crossorigin="anonymous"
     async
-></script>
+></script> -->
 </main>
 
 <footer>
-source @
-<a href="https://github.com/saulshanabrook/saulshanabrook" target="_blank" rel="noopener">github.com/saulshanabrook/saulshanabrook</a>
+
+source @ [github.com/saulshanabrook/saulshanabrook](https://github.com/saulshanabrook/saulshanabrook)
+
 </footer>
 </body>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8SK5C5XHNC"></script>
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-8SK5C5XHNC"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() {
@@ -191,5 +191,5 @@ source @
     }
     gtag("js", new Date());
     gtag("config", "G-8SK5C5XHNC");
-</script>
+</script> -->
 </html>

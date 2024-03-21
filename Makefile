@@ -7,4 +7,7 @@ posts/%.html: posts/%.md
 	cmark-gfm $< > $@
 
 index.html: README.md
-	cmark-gfm $<  --unsafe | sed 's/<a /<a target="_blank" rel="noopener" /g' > $@
+	cmark-gfm $<  --unsafe \
+		| sed 's/<a /<a target="_blank" rel="noopener" /g' \
+		|  sed 's/<!-- //g' | sed 's/ -->//g' \
+		> $@
