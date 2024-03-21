@@ -53,6 +53,9 @@ worry about rule order 😱.
 
 ## 🏡 Things I have worked on 🏡
 
+### [egglog-python](https://github.com/egraphs-good/egglog-python)
+a library to use e-graphs in Python for building expressive DSLs and optimizing code
+
 ### [Valley Housing Cooperative](https://valleyhousing.coop)
 a project with some friends to find a place to live, do fun things, and try something out
 
@@ -86,6 +89,32 @@ my new blog posts on Github Discussions
  my old blog posts on my previous statically generated website
 
 ## 🎭 Talks 🎭
+### March 21st, 2024: [Optimizing Scikit-Learn with Egglog and Numba](https://egglog-python.readthedocs.io/latest/explanation/2024_03_17_community_talk.html)
+
+> Now that I have this great e-graph library in Python, what extra mechanisms do I need to make it useful in existing Python code?
+>
+> This talk will go thorugh a few techniques developed and also point to how by bringing in use cases from scientific Python can help drive further theoretic research
+
+[EGRAPHS Community - Lightning Talks](https://egraphs.org/meeting/2024-03-21-lightning-talks)
+
+
+### November 3rd, 2023: [egglog: e-graphs in Python](https://egglog-python.readthedocs.io/latest/explanation/2023_11_pydata_lightning_talk.html)
+
+[PyData NYC '23 Lightning Talk](https://youtu.be/Ggxx34MOENc?si=XEb-RCQRR2ZTemyI&t=874)
+
+### August 1st, 2023: [egglog: E-Graphs in Python](https://egglog-python.readthedocs.io/latest/explanation/2023_07_presentation.html)
+
+> The PyData ecosystem is home to one of the largest and most successful open source communities. It's both where most newcomers to data science start and also where cutting edge research takes place. It has been able to support the diverse needs of its users through its decentralized nature, promoting creativity and collaboration.
+>
+> As the size of data has increased and our compute has moved off of our single CPUs, the nature of libraries has evolved. Whereas in the past client code would generally call out to fast pre-compiled libraries (SciPy, NumPy, etc.), now it often works via calls to a variety of distributed, out-of-core, and specialized compilation and computation backends (PyTorch, Dask, Numba, Ibis, etc.). This means a growing number of libraries do not eagerly execute a computation in the CPython interpreter, but instead optimize and translate it to some other target.
+>
+> At a high level, we can see this ecosystem as a large decentralized, embedded, domain-specific compiler, translating from high-level user expressions to different low-level primitives. This calls for an exploration of tooling to help enable this translation of programs between different representations, to facilitate the efficient use of code across this distributed ecosystem.
+>
+> One approach to automating this translation among different representations is the rewriting technique called “equality saturation.” This allows us to construct a data structure of equivalent programs (an ‘e-graph’), and then search that space for a functionally-equivalent program that has desirable characteristics such as improved performance or memory efficiency. Building this translation tooling once can enhance sharing and collaboration between the libraries which use it.
+>
+> In this talk, Saul Shanabrook goes over how e-graphs work, how they were developed, and different ways they can be used in the PyData ecosystem. Saul also surveys the egglog library, which is one specific tool for using e-graphs in Python.
+
+[OpenTeams Technical Talk](https://www.openteams.com/egglog-e-graphs-in-python/)
 
 ### April 28, 2020: [Using Altair, Ibis, and Vega for interactive exploration of OmniSci](https://www.youtube.com/watch?v=DTl32fWhm6c)
 
@@ -154,4 +183,13 @@ source @
 <a href="https://github.com/saulshanabrook/saulshanabrook" target="_blank" rel="noopener">github.com/saulshanabrook/saulshanabrook</a>
 </footer>
 </body>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8SK5C5XHNC"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-8SK5C5XHNC");
+</script>
 </html>
